@@ -1,6 +1,6 @@
 import pymysql
 
-db='ambulance_tracking_system'
+db='Ev_charging'
 
 def iud(qry,val):
     con=pymysql.connect(host='localhost',port=3306,user='root',password='',db=db)

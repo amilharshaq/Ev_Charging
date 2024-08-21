@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form id="form1" name="form1" method="post" action="station_register_code">.
+  <table width="500" border="2" class="table table-hover table-striped">
+    <tr>
+      <th scope="row">Name</th>
+      <td><input type="text" name="textfield" id="textfield" required pattern="[A-Z a-z.]{3,25}" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Place</th>
+      <td><input type="text" name="textfield2" id="textfield2" required /></td>
+    </tr>
+    <tr>
+      <th scope="row">Post</th>
+      <td><input type="text" name="textfield3" id="textfield3" required /></td>
+    </tr>
+    <tr>
+      <th scope="row">Pin</th>
+      <td><input type="text" name="textfield4" id="textfield4" required pattern="[0-9]{6}" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Email</th>
+      <td><input type="text" name="textfield5" id="textfield5"  required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}" /></td>
+    </tr>
+    <tr>
+      <th scope="row">Phone</th>
+      <td><input type="text" name="textfield6" id="textfield6" required pattern="[6789][0-9]{9}" /></td>
+    </tr>
+      <tr>
+      <th scope="row">Latitude</th>
+      <td><input type="text" name="lati" id="lati" required /></td>
+    </tr>
+      <tr>
+      <th scope="row">Longitude</th>
+      <td><input type="text" name="longi" id="longi" required /></td>
+    </tr>
+    <tr>
+      <th scope="row">Username</th>
+      <td><input type="text" name="textfield7" id="textfield7" required /></td>
+    </tr>
+    <tr>
+      <th scope="row">Password</th>
+      <td><input type="text" name="textfield8" id="textfield8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required /></td>
+    </tr>
+    <tr align="center">
+      <th colspan="2" scope="row"><input type="submit" name="button" id="button" value="Add" class="btn btn-primary" /></th>
+    </tr>
+  </table>
+</form>
+</body>
+</html>

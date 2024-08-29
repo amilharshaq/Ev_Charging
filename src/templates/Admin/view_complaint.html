@@ -1,0 +1,22 @@
+<html>
+<body>
+<form id="form1" name="form1" method="post" action="">
+  <table border="1" class="table table-hover table-dark">
+    <tr>
+      <td>Name</td>
+      <td>Complaint </td>
+      <td>Date</td>
+      <td></td>
+    </tr>
+    {% for i in val %}
+    <tr>
+      <td>{{i['name']}}</td>
+      <td>{{i['complaint']}}</td>
+      <td>{{i['date']}}</td>
+      <td><a href="send_reply?id={{i['id']}}">Reply</a> </td>
+    </tr>
+    {% endfor %}
+  </table>
+</form>
+</body>
+<!--</html>--></html>

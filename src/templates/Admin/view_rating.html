@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "Admin/admin_index.html"%}
+{% block body %}
 <head>
     <meta charset="UTF-8">
     <title>Verify charging station</title>
@@ -7,37 +7,22 @@
 <body>
  <table width="500" border="2" class="table table-hover table-striped">
     <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Address</th>
-      <th scope="col">Email</th>
-      <th scope="col">Phone</th>
-      <th scope="col">&nbsp;</th>
+      <th scope="col">Station Name</th>
+      <th scope="col">User Name</th>
+      <th scope="col">Rating</th>
+      <th scope="col">Review</th>
+      <th scope="col">Date</th>
     </tr>
         {% for i in val %}
 
     <tr>
-      <td>{{i['name']}}</td>
+      <td>{{i['sname']}}</td>
       <td>
-
-        <b>Place</b> : {{i['place']}}<br>
-      <b>Post</b> : {{i['post']}} <br>
-      <b>Pin</b>  : {{i['pin']}}
-
+          {{i['name']}}
       </td>
-      <td>{{i['email']}}</td>
-      <td>{{i['phone']}}</td>
-      <td>
-
-          {% if i['type'] == "station" %}
-
-        <p><a href="block_station?id={{i['lid']}}">Block</a></p>
-
-          {% else %}
-
-      <p><a href="unblock_station?id={{i['lid']}}">Unblock</a></p>
-
-          {% endif %}
-
+      <td>{{i['rating']}}</td>
+      <td>{{i['review']}}</td>
+      <td>{{i['date']}}
       </td>
     </tr>
 
@@ -45,4 +30,4 @@
 
   </table>
 </body>
-</html>
+{% endblock %}

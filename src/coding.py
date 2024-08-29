@@ -77,7 +77,7 @@ def station_register_code():
 
 @app.route('/admin_home')
 def admin_home():
-    return render_template("Admin/home.html")
+    return render_template("Admin/admin_index.html")
 
 
 @app.route('/verify_charging_station')
@@ -148,6 +148,16 @@ def send_reply2():
     qry = "update complaints set reply=%s where id =%s"
     iud(qry,(reply,session['cid']))
     return '''<script>alert("Success");window.location="view_complaint"</script>'''
+
+
+@app.route('/view_rating', methods=['get', 'post'])
+def view_rating():
+
+    qry = "SELECT `charging_station`.`name` AS sname,`user`.name,`rating_review`.* FROM `rating_review` JOIN `charging_station` ON `rating_review`.sid=`charging_station`.lid JOIN `user` ON `rating_review`.uid = `user`.lid"
+    res = selectall(qry)
+
+    return render_template("Admin/view_rating.html", val=res)
+
 
 
 app.run(debug = True)

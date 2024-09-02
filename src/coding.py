@@ -159,5 +159,68 @@ def view_rating():
     return render_template("Admin/view_rating.html", val=res)
 
 
+@app.route("/station_home")
+def station_home():
+    return render_template("Station/station_index.html")
 
-app.run(debug = True)
+
+@app.route("/view_booking")
+def view_booking():
+    qry = "SELECT `user`.`name`, `slots`.`from_time`,`to_time`, `booking`.* FROM `booking` JOIN `slots` ON `booking`.`sid`=`slots`.`lid` JOIN `user` ON `booking`.`lid` = `user`.`lid` WHERE `slots`.`lid`=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("Station/view_bookings.html", val=res)
+
+
+@app.route("/accept_booking")
+def accept_booking():
+    id = request.args.get("id")
+    qry = "UPDATE `booking` SET `status`='station' WHERE `id`=%s"
+    iud(qry, id)
+    return '''<script>alert("Successfully accepted");window.location="view_booking"</script>'''
+
+
+@app.route("/reject_booking")
+def reject_booking():
+    id = request.args.get("id")
+    qry = "UPDATE `booking` SET `status`='rejected' WHERE `id`=%s"
+    iud(qry, id)
+    return '''<script>alert("Successfully accepted");window.location="view_booking"</script>'''
+
+
+@app.route('/view_rating2', methods=['get', 'post'])
+def view_rating2():
+
+    qry = "SELECT `user`.`name`,`rating_review`.* FROM `rating_review` JOIN `user` ON `rating_review`.uid = `user`.`lid` WHERE `rating_review`.sid=%s"
+    res = selectall2(qry, session['lid'])
+
+    return render_template("Station/view_rating.html", val=res)
+
+
+@app.route('/manage_slots', methods=['get', 'post'])
+def manage_slots():
+
+    qry = "SELECT * FROM `slots` WHERE `lid`=%s"
+    res = selectall2(qry, session['lid'])
+
+    return render_template("Station/manage_slots.html", val=res)
+
+
+@app.route("/add_slots", methods=['post'])
+def add_slots():
+    return render_template("Station/add_slots.html")
+
+
+@app.route("/insert_slots", methods=['post'])
+def insert_slots():
+    from_time = request.form['textfield']
+    to_time = request.form['textfield2']
+    no_of_slots = request.form['textfield3']
+
+    qry = "INSERT INTO `slots` VALUES(NULL, %s, %s, %s, %s, CURDATE())"
+    iud(qry, (session['lid'], from_time, to_time, no_of_slots))
+
+    return '''<script>alert("Successfully Added");window.location="manage_slots"</script>'''
+
+
+app.run(debug=True)
+

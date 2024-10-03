@@ -1,0 +1,74 @@
+{% extends "User/user_index.html" %}
+{% block body %}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="post" action="view_station2">
+
+<table width="500" border="2" class="table table-hover table-striped">
+
+
+
+    <tr>
+      <th scope="col">Charging Station Name</th>
+      <th scope="col">Phone</th>
+      <th scope="col">Email</th>
+      <th scope="col">Date</th>
+      <th scope="col">Map</th>
+      <th scope="col">Slot</th>
+      <th scope="col">No of charging points</th>
+        <th>Status</th>
+        <th>Payment</th>
+        <td></td>
+    </tr>
+        {% for i in val %}
+
+    <tr>
+      <td>{{i['name']}}</td>
+        <td>{{i['phone']}}</td>
+      <td>
+
+       {{i['email']}}
+
+
+</td>
+         <td>
+
+       {{i['date']}}
+
+
+
+      </td>
+      <td>
+
+        <p><a href="https://www.google.com/maps?q={{i['latitude']}},{{i['longitude']}}">View in map</a></p>
+
+      <!--<p><a href="reject_booking?id={{i['id']}}">Reject</a></p>-->
+
+      </td>
+        <td>
+            {{i['from_time']}} to {{i['to_time']}}
+        </td>
+
+        <td>
+            {{i['no_of_charging_points']}}
+        </td>
+        <td>
+            {{i['status']}}
+        </td>
+
+        <td><a href="payment_details2?id={{i['id']}}">Payment details</a> </td>
+
+    </tr>
+
+    {% endfor %}
+
+  </table>
+</form>
+
+</body>
+<!--</html>-->
+
+{% endblock %}

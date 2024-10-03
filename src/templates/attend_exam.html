@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attend Exam</title>
+</head>
+<body>
+
+<form action="" method="post">
+    <table border="1">
+
+        {% for i in val %}
+
+        <tr>
+
+            <th>Question {{loop.index}}</th>
+
+        </tr>
+
+        <tr>
+            <th>{{i['question']}}qstn</th>
+        </tr>
+
+        <tr>
+            <td>
+                <p> <input type="radio" value="{{i['answer']}}" name="answer{{loop.index}}"> Option 1 </p> <br>
+                <p> <input type="radio" value="{{i['answer']}}" name="answer{{loop.index}}"> Option 2 </p> <br>
+                <p> <input type="radio" value="{{i['answer']}}" name="answer{{loop.index}}"> Option 3 </p> <br>
+                <p> <input type="radio" value="{{i['answer']}}" name="answer{{loop.index}}"> Option 4 </p> <br>
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+</form>
+
+</body>
+</html>

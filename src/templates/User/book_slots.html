@@ -1,0 +1,29 @@
+{% extends "user/user_index.html" %}
+{% block body %}
+<head>
+    <meta charset="UTF-8">
+    <title>Book slots</title>
+</head>
+<body>
+<form method="post" action="book">
+    <table class="table table-hover table-striped " border="1">
+
+        <tr>
+            <th>Number Of Charging points</th>
+            <th>
+                <select name="select">
+                    {% for i in range(1,s) %}
+                    <option>{{i}}</option>
+                    {% endfor %}
+                </select>
+            </th>
+        </tr>
+        <tr>
+            <th colspan="2"><input type="submit" value="Book"></th>
+        </tr>
+
+</table>
+</form>
+
+</body>
+{% endblock %}

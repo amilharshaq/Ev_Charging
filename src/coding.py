@@ -206,15 +206,22 @@ def station_home():
 
 @app.route("/view_booking")
 def view_booking():
-    qry = "SELECT `user`.`name`, `slots`.`from_time`,`to_time`, `booking`.* FROM `booking` JOIN `slots` ON `booking`.`sid`=`slots`.`lid` JOIN `user` ON `booking`.`lid` = `user`.`lid` WHERE `slots`.`lid`=%s"
+    qry = "SELECT `user`.`name`,phone, `slots`.`from_time`,`to_time`, `booking`.* FROM `booking` JOIN `slots` ON `booking`.`sid`=`slots`.`id` JOIN `user` ON `booking`.`lid` = `user`.`lid` WHERE `slots`.`lid`=%s and booking.status='pending'"
     res = selectall2(qry, session['lid'])
     return render_template("Station/view_bookings.html", val=res)
+
+
+@app.route("/view_accepted_booking")
+def view_accepted_booking():
+    qry = "SELECT `user`.`name`,phone, `slots`.`from_time`,`to_time`, `booking`.* FROM `booking` JOIN `slots` ON `booking`.`sid`=`slots`.`id` JOIN `user` ON `booking`.`lid` = `user`.`lid` WHERE `slots`.`lid`=%s and booking.status='accepted'"
+    res = selectall2(qry, session['lid'])
+    return render_template("Station/view_accepted_bookings.html", val=res)
 
 
 @app.route("/accept_booking")
 def accept_booking():
     id = request.args.get("id")
-    qry = "UPDATE `booking` SET `status`='station' WHERE `id`=%s"
+    qry = "UPDATE `booking` SET `status`='accepted' WHERE `id`=%s"
     iud(qry, id)
     return '''<script>alert("Successfully accepted");window.location="view_booking"</script>'''
 
@@ -265,6 +272,121 @@ def insert_slots():
 @app.route("/user_home")
 def user_home():
     return render_template("User/user_index.html")
+
+
+@app.route("/view_station")
+def view_station():
+    return render_template("User/view_station.html")
+
+
+@app.route("/view_station2", methods=['post'])
+def view_station2():
+    loc = request.form['textfield']
+    qry="SELECT * FROM `charging_station` JOIN `login` ON `charging_station`.lid=`login`.id WHERE `login`.type='station' AND `charging_station`.`place`=%s"
+    res = selectall2(qry, loc)
+    return render_template("User/view_station.html", val=res)
+
+
+@app.route("/view_slots2")
+def view_slots2():
+    id = request.args.get('id')
+    qry="SELECT * FROM `slots` WHERE lid=%s"
+    res = selectall2(qry, id)
+    return render_template("User/view_slots.html", val=res)
+
+
+@app.route("/book_slots")
+def book_slots():
+    id = request.args.get('id')
+    slots = request.args.get('slots')
+    session['sid'] = id
+    session['slots'] = slots
+    slots = int(slots)
+    return render_template("User/book_slots.html", s = slots)
+
+
+@app.route("/book", methods=['post'])
+def book():
+    slots = request.form['select']
+    qry = "INSERT INTO `booking` VALUES(NULL, %s, %s, CURDATE(), 'pending', %s)"
+    iud(qry, (session['lid'], session['sid'], slots))
+
+    qry = "UPDATE `slots` SET `no_of_charging_points`=`no_of_charging_points`-%s WHERE `id`=%s"
+    iud(qry,(session['slots'], session['sid']))
+
+    return '''<script>alert("Successfully booked"); window.location="view_station"</script>'''
+
+
+@app.route("/user_view_complaint")
+def user_view_complaint():
+    qry = "SELECT * FROM `complaints` WHERE lid=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("User/send_complaint.html", val=res)
+
+
+@app.route("/user_add_complaint", methods=['post'])
+def user_add_complaint():
+    return render_template("User/add_new_complaint.html")
+
+
+@app.route("/insert_new_complaint", methods=['post'])
+def insert_new_complaint():
+    complaint = request.form['textfield']
+    qry = "INSERT INTO `complaints` VALUES(NULL,%s,%s,CURDATE(),'pending')"
+    iud(qry,(session['lid'], complaint))
+
+    return '''<script>alert("Success"); window.location="user_view_complaint"</script>'''
+
+
+@app.route('/view_booking_details')
+def view_booking_details():
+    qry = "SELECT `charging_station`.`name`,`email`,`phone`,`latitude`,`longitude`,`slots`.`from_time`,`to_time`,`booking`.* FROM `booking` JOIN `slots` ON `booking`.sid=`slots`.id JOIN `charging_station` ON `slots`.lid=`charging_station`.`lid` WHERE `booking`.lid=%s"
+    res = selectall2(qry, session['lid'])
+    return render_template("User/view_booking.html", val=res)
+
+
+@app.route("/payment_details")
+def payment_details():
+    id = request.args.get('id')
+    session['booking_id'] = id
+    qry = "SELECT * FROM `bill` WHERE bid=%s and status!='pending'"
+    res = selectone(qry, id)
+
+    if res is None:
+        amount = "No payment yet"
+    else:
+        amount = res['amount']
+
+    return render_template("Station/payment_details.html", amt = amount)
+
+
+@app.route('/generate_bill', methods=['post'])
+def generate_bill():
+    qry = "SELECT * FROM `bill` WHERE bid=%s and status='pending'"
+    res = selectone(qry, session['booking_id'])
+
+    if res is None:
+        amount = "No Bill Generated Yet"
+    else:
+        amount = res['amount']
+    return render_template("Station/generate_bill.html", bill=amount)
+
+
+@app.route("/generate_bill2", methods=['post'])
+def generate_bill2():
+    amount = request.form['textfield']
+    qry = "INSERT INTO `bill` VALUES(NULL,%s,%s,CURDATE(),'pending')"
+    iud(qry,(session['booking_id'], amount))
+
+    return '''<script>alert("Success"); window.location="view_accepted_booking"</script>'''
+
+
+@app.route("/payment_details2")
+def payment_details2():
+    id = request.args.get('id')
+    qry = "SELECT * FROM `bill` WHERE bid=%s AND STATUS = 'pending'"
+    res = selectone(qry,id)
+    return render_template("User/payment_details.html", val=res)
 
 
 app.run(debug=True)

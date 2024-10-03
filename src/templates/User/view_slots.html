@@ -1,0 +1,52 @@
+
+{% extends "User/user_index.html" %}
+{% block body %}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form action="add_slots" method="post">
+
+  <table border="1" class="table table-hover table-striped">
+    <tr>
+      <td>From time</td>
+      <td>To time </td>
+      <td>Date</td>
+      <td>Available slots</td>
+      <td></td>
+    </tr>
+    {% for i in val %}
+    <tr>
+      <td>{{i['from_time']}}</td>
+      <td>{{i['to_time']}}</td>
+      <td>{{i['date']}}</td>
+      <td>{{i['no_of_charging_points']}}</td>
+      <td>
+        {% if i['no_of_charging_points'] == 0 %}
+
+        <b class="text text-danger">No Charging Points Available</b>
+
+        {% else %}
+
+
+        <a href="book_slots?id={{i['id']}}&slots={{i['no_of_charging_points']}}">Book</a>
+
+        {% endif %}
+
+      </td>
+    </tr>
+    {% endfor %}
+
+      <!--<tr ALIGN="CENTER">-->
+          <!--<td colspan="4"> <input type="submit" value="Addnew" class="btn btn-primary"> </td>-->
+      <!--</tr>-->
+
+  </table>
+
+</form>
+
+</body>
+<!--</html>-->
+{% endblock %}

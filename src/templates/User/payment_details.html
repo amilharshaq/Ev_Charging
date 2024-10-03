@@ -1,0 +1,20 @@
+{% extends "User/user_index.html"%}
+{% block body %}
+<body>
+<form id="form1" name="form1" method="post" action="user_add_complaint">
+  <table border="1" class="table table-hover table-bordered">
+    <tr>
+      <td>Amount </td>
+      <td>Date</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>{{val['amount']}}</td>
+      <td>{{val['date']}}</td>
+      <td><a href="#">Pay</a> </td>
+    </tr>
+
+  </table>
+</form>
+</body>
+{% endblock %}

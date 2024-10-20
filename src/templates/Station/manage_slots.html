@@ -12,6 +12,7 @@
     <tr>
       <td>From time</td>
       <td>To time </td>
+      <td>Number of charging points </td>
       <td>Date</td>
       <td></td>
     </tr>
@@ -19,13 +20,14 @@
     <tr>
       <td>{{i['from_time']}}</td>
       <td>{{i['to_time']}}</td>
+      <td>{{i['no_of_charging_points']}}</td>
       <td>{{i['date']}}</td>
       <td><a href="delete?id={{i['id']}}">Delete</a> </td>
     </tr>
     {% endfor %}
 
       <tr ALIGN="CENTER">
-          <td colspan="4"> <input type="submit" value="Addnew" class="btn btn-primary"> </td>
+          <td colspan="5"> <input type="submit" value="Addnew" class="btn btn-primary"> </td>
       </tr>
 
   </table>

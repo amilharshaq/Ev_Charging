@@ -1,6 +1,8 @@
 from flask import *
 from src.dbconnection import *
 
+import razorpay
+
 app = Flask(__name__)
 
 app.secret_key = "74745"
@@ -252,6 +254,14 @@ def manage_slots():
     return render_template("Station/manage_slots.html", val=res)
 
 
+@app.route("/delete")
+def delete():
+    id = request.args.get('id')
+    qry = "DELETE FROM `slots` WHERE id=%s"
+    iud(qry,id)
+    return '''<script>alert("Deleted");window.location="manage_slots"</script>'''
+
+
 @app.route("/add_slots", methods=['post'])
 def add_slots():
     return render_template("Station/add_slots.html")
@@ -340,9 +350,25 @@ def insert_new_complaint():
 
 @app.route('/view_booking_details')
 def view_booking_details():
-    qry = "SELECT `charging_station`.`name`,`email`,`phone`,`latitude`,`longitude`,`slots`.`from_time`,`to_time`,`booking`.* FROM `booking` JOIN `slots` ON `booking`.sid=`slots`.id JOIN `charging_station` ON `slots`.lid=`charging_station`.`lid` WHERE `booking`.lid=%s"
+    qry = "SELECT `charging_station`.`name`,`email`,`phone`,`latitude`,`longitude`,charging_station.lid as clid, `slots`.`from_time`,`to_time`,`booking`.* FROM `booking` JOIN `slots` ON `booking`.sid=`slots`.id JOIN `charging_station` ON `slots`.lid=`charging_station`.`lid` WHERE `booking`.lid=%s"
     res = selectall2(qry, session['lid'])
     return render_template("User/view_booking.html", val=res)
+
+
+@app.route("/report_charging_station")
+def report_charging_station():
+    id = request.args.get('id')
+    session['rsid'] = id
+    return render_template("User/report_station.html")
+
+
+@app.route("/final_report", methods=['post'])
+def final_report():
+    details = request.form['textfield']
+    qry = "INSERT INTO `report` VALUES(NULL, %s, %s, %s, CURDATE(), 'pending')"
+    iud(qry, (session['lid'], session['rsid'], details))
+
+    return '''<script>alert("Reported"); window.location="view_booking_details"</script>'''
 
 
 @app.route("/payment_details")
@@ -356,13 +382,14 @@ def payment_details():
         amount = "No payment yet"
     else:
         amount = res['amount']
+        status = res['status']
 
     return render_template("Station/payment_details.html", amt = amount)
 
 
 @app.route('/generate_bill', methods=['post'])
 def generate_bill():
-    qry = "SELECT * FROM `bill` WHERE bid=%s and status='pending'"
+    qry = "SELECT * FROM `bill` WHERE bid=%s"
     res = selectone(qry, session['booking_id'])
 
     if res is None:
@@ -374,19 +401,54 @@ def generate_bill():
 
 @app.route("/generate_bill2", methods=['post'])
 def generate_bill2():
-    amount = request.form['textfield']
-    qry = "INSERT INTO `bill` VALUES(NULL,%s,%s,CURDATE(),'pending')"
-    iud(qry,(session['booking_id'], amount))
 
-    return '''<script>alert("Success"); window.location="view_accepted_booking"</script>'''
+    qry = "SELECT * FROM `bill` WHERE bid=%s"
+    res = selectone(qry, session['booking_id'])
+
+    if res is None:
+
+        amount = request.form['textfield']
+        qry = "INSERT INTO `bill` VALUES(NULL,%s,%s,CURDATE(),'pending')"
+        iud(qry,(session['booking_id'], amount))
+
+        return '''<script>alert("Success"); window.location="view_accepted_booking"</script>'''
+
+    else:
+        amount = request.form['textfield']
+        qry = "UPDATE `bill` SET `amount`=`amount`+ %s WHERE bid=%s"
+        iud(qry, (amount, session['booking_id']))
+
+        return '''<script>alert("Success"); window.location="view_accepted_booking"</script>'''
 
 
 @app.route("/payment_details2")
 def payment_details2():
     id = request.args.get('id')
-    qry = "SELECT * FROM `bill` WHERE bid=%s AND STATUS = 'pending'"
+
+    qry = "SELECT * FROM `bill` WHERE bid=%s"
     res = selectone(qry,id)
+
+    if res is not None:
+        session['amt'] = int(res['amount']) * 100
+        session['paying_req_id'] = res['id']
     return render_template("User/payment_details.html", val=res)
+
+
+@app.route('/user_pay_proceed')
+def user_pay_proceed():
+    client = razorpay.Client(auth=("rzp_test_edrzdb8Gbx5U5M", "XgwjnFvJQNG6cS7Q13aHKDJj"))
+    print(client)
+    payment = client.order.create({'amount': session['amt'], 'currency': "INR", 'payment_capture': '1'})
+    return render_template('UserPayProceed.html', p=payment)
+
+
+@app.route('/user_pay_complete', methods=['post'])
+def user_pay_complete():
+
+    qry = "UPDATE `bill` SET STATUS = 'payed' WHERE id = %s"
+    iud(qry, session['paying_req_id'])
+
+    return '''<script>alert("payment successful");window.location="user_home"</script>'''
 
 
 app.run(debug=True)

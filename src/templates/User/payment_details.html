@@ -11,7 +11,17 @@
     <tr>
       <td>{{val['amount']}}</td>
       <td>{{val['date']}}</td>
-      <td><a href="#">Pay</a> </td>
+      <td>
+        {% if val['status'] == "pending" %}
+        <a href="user_pay_proceed">Pay</a>
+
+        {% else %}
+
+        <b class="text text-success">Already Paid</b>
+
+        {% endif %}
+
+      </td>
     </tr>
 
   </table>

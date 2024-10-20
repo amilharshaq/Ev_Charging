@@ -1,0 +1,24 @@
+{% extends "User/user_index.html"%}
+{% block body %}
+
+<body>
+<form id="form1" name="form1" method="post" action="final_report">
+  <table border="1" class="table table-hover table-striped ">
+    <tr>
+      <td>Details</td>
+      <td>
+        <input type="text" name="textfield" required class="form-control"/>
+     </td>
+    </tr>
+
+    <tr align="center">
+      <td colspan="2">
+
+          <input type="submit" name="Submit" value="Report" class="btn btn-success"/>
+
+      </td>
+    </tr>
+  </table>
+</form>
+</body>
+{% endblock %}
